@@ -5,8 +5,7 @@ import {
   Container,
   Card,
   CardContent,
-  Typography,
-  Box
+  Typography
 } from "@mui/material";
 
 import {
