@@ -1,25 +1,67 @@
-import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter,Routes,Route} from "react-router-dom";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import AdminDashboard from "./pages/AdminDashboard";
+import StudentDashboard from "./pages/StudentDashboard";
+import TestPage from "./TestPage";
+import AddQuestion from "./AddQuestion";
+import StudentResults from "./StudentResults";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import "./App.css";
+
+function App(){
+
+ return(
+
+  <BrowserRouter>
+
+   {/* Navbar visible everywhere except login/register */}
+   <Navbar/>
+
+   <Routes>
+
+    <Route path="/" element={<Register/>}/>
+    <Route path="/login" element={<Login/>}/>
+
+    <Route path="/admin" element={
+      <ProtectedRoute>
+        <AdminDashboard/>
+      </ProtectedRoute>
+    }/>
+
+    <Route path="/student" element={
+      <ProtectedRoute>
+        <StudentDashboard/>
+      </ProtectedRoute>
+    }/>
+
+    <Route path="/test/:id" element={
+      <ProtectedRoute>
+        <TestPage/>
+      </ProtectedRoute>
+    }/>
+
+    <Route path="/addQuestion/:id" element={
+      <ProtectedRoute>
+        <AddQuestion/>
+      </ProtectedRoute>
+    }/>
+
+    <Route path="/results" element={
+      <ProtectedRoute>
+        <StudentResults/>
+      </ProtectedRoute>
+    }/>
+
+   </Routes>
+
+  </BrowserRouter>
+
+ )
+
 }
 
 export default App;

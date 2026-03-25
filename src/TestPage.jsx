@@ -1,0 +1,252 @@
+import React, { useEffect, useState, useCallback } from "react";
+import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
+
+import {
+  Container,
+  Typography,
+  Card,
+  CardContent,
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  Button,
+  TextField,
+  Box,
+  LinearProgress
+} from "@mui/material";
+
+function TestPage() {
+
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [questions, setQuestions] = useState([]);
+  const [answers, setAnswers] = useState({});
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const [submitted, setSubmitted] = useState(false);
+  const [score, setScore] = useState(null);
+  const [violations, setViolations] = useState(0);
+
+  const studentId = localStorage.getItem("userId");
+
+  // ================= LOAD =================
+  useEffect(() => {
+
+    Promise.all([
+      axios.get("http://localhost:8080/questions/test/" + id),
+      axios.get("http://localhost:8080/tests/all")
+    ])
+    .then(([qRes, tRes]) => {
+
+      setQuestions(qRes.data);
+
+      const test = tRes.data.find(t => t.id === Number(id));
+      if (test) {
+        setTimeLeft(test.duration * 60);
+      }
+
+      setLoading(false);
+
+    });
+
+  }, [id]);
+
+  // ================= TIMER =================
+  useEffect(() => {
+    if (timeLeft <= 0 || submitted) return;
+
+    const timer = setInterval(() => {
+      setTimeLeft(prev => prev - 1);
+    }, 1000);
+
+    return () => clearInterval(timer);
+
+  }, [timeLeft, submitted]);
+
+  // ================= SUBMIT =================
+  const submitTest = useCallback(() => {
+
+    axios.post(
+      "http://localhost:8080/submit/" + id,
+      {
+        studentId,
+        answers
+      }
+    )
+    .then(res => {
+      setScore(res.data.score);
+      setSubmitted(true);
+    });
+
+  }, [id, answers, studentId]);
+
+  // ================= AUTO SUBMIT ON TIME =================
+  useEffect(() => {
+    if (!loading && timeLeft === 0 && !submitted) {
+      submitTest();
+    }
+  }, [timeLeft, loading, submitted, submitTest]);
+
+  // ================= TAB SWITCH DETECTION =================
+  useEffect(() => {
+
+    const handleVisibilityChange = () => {
+      if (document.hidden && !submitted) {
+
+        setViolations(prev => {
+          const newCount = prev + 1;
+
+          console.log("Tab switched:", newCount);
+
+          // send to backend (optional but recommended)
+          axios.post("http://localhost:8080/violations/log", {
+            type: "TAB_SWITCH",
+            duration: 0
+          }).catch(() => {}); // ignore error if API not ready
+
+          if (newCount >= 3) {
+            alert("Too many tab switches! Test will be auto-submitted.");
+            submitTest();
+          }
+
+          return newCount;
+        });
+
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+
+  }, [submitted, submitTest]);
+
+  // ================= ANSWER HANDLER =================
+  const handleAnswer = (qid, val) => {
+    setAnswers(prev => ({ ...prev, [qid]: val }));
+  };
+
+  const exitTest = () => {
+    navigate("/student");
+  };
+
+  if (loading) {
+    return <LinearProgress />;
+  }
+
+  return (
+
+    <Container maxWidth="md" style={{ marginTop: "20px" }}>
+
+      <Typography variant="h4" align="center" gutterBottom>
+        Online Test
+      </Typography>
+
+      {!submitted && (
+        <Box textAlign="center" mb={2}>
+          <Typography variant="h6" color="error">
+            Time Left: {Math.floor(timeLeft / 60)}:
+            {("0" + (timeLeft % 60)).slice(-2)}
+          </Typography>
+
+          <Typography>
+            Tab Warnings: {violations} / 3
+          </Typography>
+        </Box>
+      )}
+
+      {submitted ? (
+
+        <Card>
+          <CardContent style={{ textAlign: "center" }}>
+            <Typography variant="h5">
+              Your Score: {score}
+            </Typography>
+
+            <Button
+              variant="contained"
+              color="success"
+              onClick={exitTest}
+              style={{ marginTop: "20px" }}
+            >
+              Exit
+            </Button>
+          </CardContent>
+        </Card>
+
+      ) : (
+
+        <>
+          {questions.map(q => (
+
+            <Card key={q.id} style={{ marginBottom: "15px" }}>
+              <CardContent>
+
+                <Typography variant="h6">
+                  {q.question}
+                </Typography>
+
+                {/* MCQ */}
+                {q.type === "MCQ" && (
+                  <RadioGroup
+                    value={answers[q.id] || ""}
+                    onChange={(e) => handleAnswer(q.id, e.target.value)}
+                  >
+                    {["A", "B", "C", "D"].map(opt => (
+                      <FormControlLabel
+                        key={opt}
+                        value={opt}
+                        control={<Radio />}
+                        label={q["option" + opt]}
+                      />
+                    ))}
+                  </RadioGroup>
+                )}
+
+                {/* CODING */}
+                {q.type === "CODING" && (
+                  <Box mt={2}>
+                    <Typography>
+                      Sample Input: {q.sampleInput}
+                    </Typography>
+
+                    <TextField
+                      multiline
+                      rows={4}
+                      fullWidth
+                      placeholder="Write your code..."
+                      value={answers[q.id] || ""}
+                      onChange={(e) => handleAnswer(q.id, e.target.value)}
+                    />
+                  </Box>
+                )}
+
+              </CardContent>
+            </Card>
+
+          ))}
+
+          <Box textAlign="center">
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={submitTest}
+            >
+              Submit Test
+            </Button>
+          </Box>
+        </>
+      )}
+
+    </Container>
+
+  );
+}
+
+export default TestPage;
