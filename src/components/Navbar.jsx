@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
-import API from "../api";
+
 function Navbar(){
 
  const navigate = useNavigate();

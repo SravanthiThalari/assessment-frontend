@@ -6,7 +6,7 @@ import StudentDashboard from "./pages/StudentDashboard";
 import TestPage from "./TestPage";
 import AddQuestion from "./AddQuestion";
 import StudentResults from "./StudentResults";
-import API from "./api";
+
 
 import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
