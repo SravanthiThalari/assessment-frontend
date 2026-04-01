@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
-import API from "../api";
+import API from "../api"; // ✅ use API
 import { useParams } from "react-router-dom";
 
 function AddQuestion(){
@@ -29,7 +28,8 @@ function AddQuestion(){
    type:"MCQ"
   };
 
-  axios.post("http://localhost:8080/questions/add",data)
+  // ✅ FIXED
+  API.post("/questions/add", data)
   .then(res=>{
    alert("Question Added Successfully");
 

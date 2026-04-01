@@ -8,7 +8,7 @@ function UserTest() {
 
   useEffect(() => {
 
-    axios.get("http://localhost:8080/users/all")
+   API.get("/users/all")
       .then(res => {
         setUsers(res.data);
       })

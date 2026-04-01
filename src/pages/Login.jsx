@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
+import API from "../api"; // ✅ use API
 import { useNavigate } from "react-router-dom";
-import API from "../api";
+
 import {
   Container,
   Card,
@@ -31,7 +31,8 @@ function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    axios.post("http://localhost:8080/users/login", login)
+    // ✅ FIXED
+    API.post("/users/login", login)
       .then(res => {
 
         if (!res.data || !res.data.token) {
@@ -59,6 +60,7 @@ function Login() {
         alert("Login failed");
       });
   };
+
 return (
 
   <Box

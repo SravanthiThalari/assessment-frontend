@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
-import API from "../api";
+import API from "../api"; // ✅ use API
 import {
   Container,
   Card,
@@ -28,13 +27,12 @@ function Register(){
  const submit=(e)=>{
   e.preventDefault();
 
-  axios.post("http://localhost:8080/users/register",data)
-
+  // ✅ FIXED
+  API.post("/users/register", data)
   .then(res=>{
     alert("Registration Successful");
     window.location="/login";
   })
-
   .catch(err=>{
     console.log(err);
     alert("Registration Failed");

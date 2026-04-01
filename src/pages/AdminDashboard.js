@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import API from "../api"; // ✅ use API
 import { useNavigate } from "react-router-dom";
-import API from "../api";
+
 function AdminDashboard(){
 
  const navigate = useNavigate();
@@ -13,8 +13,7 @@ function AdminDashboard(){
 
  const [tests,setTests] = useState([]);
  const [submissions,setSubmissions] = useState([]);
-
- const [editId,setEditId] = useState(null); // ⭐ NEW
+ const [editId,setEditId] = useState(null);
 
  // ================= CREATE / UPDATE =================
  const handleChange=(e)=>{
@@ -25,8 +24,7 @@ function AdminDashboard(){
    e.preventDefault();
 
    if(editId){
-     // 🔁 UPDATE
-     axios.put(`http://localhost:8080/tests/update/${editId}`,test)
+     API.put(`/tests/update/${editId}`, test)
      .then(()=>{
         alert("Test Updated Successfully");
         setEditId(null);
@@ -34,8 +32,7 @@ function AdminDashboard(){
         loadTests();
      });
    } else {
-     // ➕ CREATE
-     axios.post("http://localhost:8080/tests/create",test)
+     API.post("/tests/create", test)
      .then(()=>{
         alert("Test Created Successfully");
         loadTests();
@@ -49,14 +46,14 @@ function AdminDashboard(){
 
  // ================= LOAD =================
  const loadTests = ()=>{
-   axios.get("http://localhost:8080/tests/all")
+   API.get("/tests/all")
    .then(res=>{
       setTests(res.data);
    });
  }
 
  const loadSubmissions = ()=>{
-   axios.get("http://localhost:8080/submit/all")
+   API.get("/submit/all")
    .then(res=>{
       setSubmissions(res.data);
    });
@@ -82,7 +79,7 @@ function AdminDashboard(){
 
  const handleDelete = (id) => {
    if(window.confirm("Are you sure you want to delete this test?")){
-     axios.delete(`http://localhost:8080/tests/delete/${id}`)
+     API.delete(`/tests/delete/${id}`)
      .then(()=>{
         alert("Test Deleted");
         loadTests();
@@ -159,7 +156,7 @@ function AdminDashboard(){
       </div>
     </div>
 
-    {/* STUDENT RESULTS TABLE */}
+    {/* RESULTS TABLE */}
     <div className="card">
       <h3>All Student Results</h3>
 

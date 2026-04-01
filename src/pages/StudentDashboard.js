@@ -1,6 +1,5 @@
 import React,{useEffect,useState} from "react";
-import axios from "axios";
-import API from "../api";
+import API from "../api"; // ✅ use API
 import {useNavigate} from "react-router-dom";
 
 function StudentDashboard(){
@@ -13,7 +12,7 @@ function StudentDashboard(){
  // ================= LOAD TESTS =================
  useEffect(()=>{
 
-   axios.get("http://localhost:8080/tests/all", {
+   API.get("/tests/all", {
      headers: {
        Authorization: "Bearer " + token
      }
@@ -32,7 +31,7 @@ function StudentDashboard(){
 
    const studentId = localStorage.getItem("userId");
 
-   axios.get(`http://localhost:8080/submit/result/${studentId}/${testId}`, {
+   API.get(`/submit/result/${studentId}/${testId}`, {
      headers: {
        Authorization: "Bearer " + token
      }

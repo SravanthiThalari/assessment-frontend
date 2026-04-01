@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import axios from "axios";
-import API from "../api";
+import API from "../api"; // ✅ use API
 import { useParams, useNavigate } from "react-router-dom";
 
 import {
@@ -33,10 +32,11 @@ function TestPage() {
 
   const studentId = localStorage.getItem("userId");
 
+  // ✅ LOAD QUESTIONS
   useEffect(() => {
     Promise.all([
-      axios.get("http://localhost:8080/questions/test/" + id),
-      axios.get("http://localhost:8080/tests/all")
+      API.get(`/questions/test/${id}`),
+      API.get("/tests/all")
     ])
     .then(([qRes, tRes]) => {
 
@@ -51,6 +51,7 @@ function TestPage() {
     });
   }, [id]);
 
+  // ✅ TIMER
   useEffect(() => {
     if (timeLeft <= 0 || submitted) return;
 
@@ -61,23 +62,23 @@ function TestPage() {
     return () => clearInterval(timer);
   }, [timeLeft, submitted]);
 
+  // ✅ SUBMIT TEST
   const submitTest = useCallback(() => {
-    axios.post(
-      "http://localhost:8080/submit/" + id,
-      { studentId, answers }
-    )
-    .then(res => {
-      setScore(res.data.score);
-      setSubmitted(true);
-    });
+    API.post(`/submit/${id}`, { studentId, answers })
+      .then(res => {
+        setScore(res.data.score);
+        setSubmitted(true);
+      });
   }, [id, answers, studentId]);
 
+  // AUTO SUBMIT
   useEffect(() => {
     if (!loading && timeLeft === 0 && !submitted) {
       submitTest();
     }
   }, [timeLeft, loading, submitted, submitTest]);
 
+  // TAB SWITCH DETECTION
   useEffect(() => {
     const handleVisibilityChange = () => {
       if (document.hidden && !submitted) {
@@ -85,7 +86,7 @@ function TestPage() {
         setViolations(prev => {
           const newCount = prev + 1;
 
-          axios.post("http://localhost:8080/violations/log", {
+          API.post("/violations/log", {
             type: "TAB_SWITCH",
             duration: 0
           }).catch(() => {});

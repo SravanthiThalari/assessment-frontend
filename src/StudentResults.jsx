@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import API from "../api";
+import API from "../api"; // ✅ use API
+
 import {
   Container,
   Card,
@@ -8,9 +8,7 @@ import {
   Typography
 } from "@mui/material";
 
-import {
-  Bar
-} from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 
 import {
   Chart as ChartJS,
@@ -39,7 +37,8 @@ function StudentResults(){
 
  useEffect(()=>{
 
-  axios.get(`http://localhost:8080/submit/student/${studentId}`)
+  // ✅ FIXED
+  API.get(`/submit/student/${studentId}`)
   .then(res=>{
     setResults(res.data);
   })
@@ -49,9 +48,9 @@ function StudentResults(){
 
  },[studentId]);
 
- // 📊 Prepare chart data
+ // 📊 Chart Data
  const chartData = {
-  labels: results.map((r, index) => "Test " + r.testId),
+  labels: results.map((r) => "Test " + r.testId),
   datasets: [
     {
       label: "Score",
@@ -75,7 +74,7 @@ function StudentResults(){
     </CardContent>
    </Card>
 
-   {/* Result List */}
+   {/* Results */}
    {results.map((r)=>(
      <Card key={r.id} style={{ marginBottom: "10px" }}>
        <CardContent>
@@ -103,7 +102,6 @@ function StudentResults(){
   </Container>
 
  );
-
 }
 
 export default StudentResults;
