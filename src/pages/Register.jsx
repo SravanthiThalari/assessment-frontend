@@ -41,100 +41,117 @@ function Register(){
 
  }
 
- return(
+return (
 
-  <Container maxWidth="sm" style={{ marginTop: "60px" }}>
+  <Box
+    sx={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "linear-gradient(to right, #eef2ff, #f5f7fb)"
+    }}
+  >
 
-   <Card
-     elevation={6}
-     style={{
-       borderRadius: "15px",
-       padding: "10px"
-     }}
-   >
+    <Container maxWidth="sm">
 
-    <CardContent>
-
-     <Typography
-       variant="h4"
-       align="center"
-       gutterBottom
-       style={{ fontWeight: "bold" }}
-     >
-       Register
-     </Typography>
-
-     <Box
-       component="form"
-       onSubmit={submit}
-       display="flex"
-       flexDirection="column"
-       gap={3}
-     >
-
-      <TextField
-        label="Full Name"
-        name="name"
-        value={data.name}
-        onChange={changeData}
-        required
-        fullWidth
-      />
-
-      <TextField
-        label="Email"
-        name="email"
-        type="email"
-        value={data.email}
-        onChange={changeData}
-        required
-        fullWidth
-      />
-
-      <TextField
-        label="Password"
-        name="password"
-        type="password"
-        value={data.password}
-        onChange={changeData}
-        required
-        fullWidth
-      />
-
-      <TextField
-        select
-        label="Role"
-        name="role"
-        value={data.role}
-        onChange={changeData}
-        fullWidth
-      >
-        <MenuItem value="STUDENT">Student</MenuItem>
-        <MenuItem value="ADMIN">Admin</MenuItem>
-      </TextField>
-
-      <Button
-        type="submit"
-        variant="contained"
-        size="large"
-        style={{
-          background: "linear-gradient(45deg, #2196F3, #21CBF3)",
-          color: "white",
-          fontWeight: "bold"
+      <Card
+        elevation={10}
+        sx={{
+          borderRadius: "20px",
+          p: 3
         }}
       >
-        Register
-      </Button>
 
-     </Box>
+        <CardContent>
 
-    </CardContent>
+          <Typography
+            variant="h4"
+            align="center"
+            gutterBottom
+            sx={{ fontWeight: "bold", mb: 3 }}
+          >
+            Create Account
+          </Typography>
 
-   </Card>
+          <Box
+            component="form"
+            onSubmit={submit}
+            display="flex"
+            flexDirection="column"
+            gap={2.5}
+          >
 
-  </Container>
+            <TextField
+              label="Full Name"
+              name="name"
+              value={data.name}
+              onChange={changeData}
+              required
+              fullWidth
+            />
 
- )
+            <TextField
+              label="Email"
+              name="email"
+              type="email"
+              value={data.email}
+              onChange={changeData}
+              required
+              fullWidth
+            />
+
+            <TextField
+              label="Password"
+              name="password"
+              type="password"
+              value={data.password}
+              onChange={changeData}
+              required
+              fullWidth
+            />
+
+            <TextField
+              select
+              label="Role"
+              name="role"
+              value={data.role}
+              onChange={changeData}
+              fullWidth
+            >
+              <MenuItem value="STUDENT">Student</MenuItem>
+              <MenuItem value="ADMIN">Admin</MenuItem>
+            </TextField>
+
+            <Button
+              type="submit"
+              variant="contained"
+              size="large"
+              sx={{
+                mt: 1,
+                borderRadius: "10px",
+                fontWeight: "bold",
+                textTransform: "none",
+                background: "linear-gradient(45deg, #4f46e5, #6366f1)",
+                ":hover": {
+                  background: "linear-gradient(45deg, #4338ca, #4f46e5)"
+                }
+              }}
+            >
+              Register
+            </Button>
+
+          </Box>
+
+        </CardContent>
+
+      </Card>
+
+    </Container>
+
+  </Box>
+
+);
 
 }
 

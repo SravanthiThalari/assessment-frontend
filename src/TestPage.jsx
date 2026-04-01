@@ -32,9 +32,7 @@ function TestPage() {
 
   const studentId = localStorage.getItem("userId");
 
-  // ================= LOAD =================
   useEffect(() => {
-
     Promise.all([
       axios.get("http://localhost:8080/questions/test/" + id),
       axios.get("http://localhost:8080/tests/all")
@@ -49,12 +47,9 @@ function TestPage() {
       }
 
       setLoading(false);
-
     });
-
   }, [id]);
 
-  // ================= TIMER =================
   useEffect(() => {
     if (timeLeft <= 0 || submitted) return;
 
@@ -63,49 +58,36 @@ function TestPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-
   }, [timeLeft, submitted]);
 
-  // ================= SUBMIT =================
   const submitTest = useCallback(() => {
-
     axios.post(
       "http://localhost:8080/submit/" + id,
-      {
-        studentId,
-        answers
-      }
+      { studentId, answers }
     )
     .then(res => {
       setScore(res.data.score);
       setSubmitted(true);
     });
-
   }, [id, answers, studentId]);
 
-  // ================= AUTO SUBMIT ON TIME =================
   useEffect(() => {
     if (!loading && timeLeft === 0 && !submitted) {
       submitTest();
     }
   }, [timeLeft, loading, submitted, submitTest]);
 
-  // ================= TAB SWITCH DETECTION =================
   useEffect(() => {
-
     const handleVisibilityChange = () => {
       if (document.hidden && !submitted) {
 
         setViolations(prev => {
           const newCount = prev + 1;
 
-          console.log("Tab switched:", newCount);
-
-          // send to backend (optional but recommended)
           axios.post("http://localhost:8080/violations/log", {
             type: "TAB_SWITCH",
             duration: 0
-          }).catch(() => {}); // ignore error if API not ready
+          }).catch(() => {});
 
           if (newCount >= 3) {
             alert("Too many tab switches! Test will be auto-submitted.");
@@ -119,14 +101,10 @@ function TestPage() {
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
-
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
 
   }, [submitted, submitTest]);
 
-  // ================= ANSWER HANDLER =================
   const handleAnswer = (qid, val) => {
     setAnswers(prev => ({ ...prev, [qid]: val }));
   };
@@ -148,33 +126,33 @@ function TestPage() {
       </Typography>
 
       {!submitted && (
-        <Box textAlign="center" mb={2}>
-          <Typography variant="h6" color="error">
-            Time Left: {Math.floor(timeLeft / 60)}:
+        <Box className="test-header">
+          <Typography className="timer">
+            ⏳ {Math.floor(timeLeft / 60)}:
             {("0" + (timeLeft % 60)).slice(-2)}
           </Typography>
 
-          <Typography>
-            Tab Warnings: {violations} / 3
+          <Typography className="warning">
+            ⚠ Tab Switch: {violations}/3
           </Typography>
         </Box>
       )}
 
       {submitted ? (
 
-        <Card>
+        <Card className="result-card">
           <CardContent style={{ textAlign: "center" }}>
-            <Typography variant="h5">
-              Your Score: {score}
+            <Typography variant="h4">
+              🎉 Your Score: {score}
             </Typography>
 
             <Button
               variant="contained"
               color="success"
               onClick={exitTest}
-              style={{ marginTop: "20px" }}
+              sx={{ mt: 3 }}
             >
-              Exit
+              Back to Dashboard
             </Button>
           </CardContent>
         </Card>
@@ -182,16 +160,15 @@ function TestPage() {
       ) : (
 
         <>
-          {questions.map(q => (
+          {questions.map((q, index) => (
 
-            <Card key={q.id} style={{ marginBottom: "15px" }}>
+            <Card key={q.id} className="question-card">
               <CardContent>
 
-                <Typography variant="h6">
-                  {q.question}
+                <Typography className="question-title">
+                  Q{index + 1}. {q.question}
                 </Typography>
 
-                {/* MCQ */}
                 {q.type === "MCQ" && (
                   <RadioGroup
                     value={answers[q.id] || ""}
@@ -203,15 +180,15 @@ function TestPage() {
                         value={opt}
                         control={<Radio />}
                         label={q["option" + opt]}
+                        className="option"
                       />
                     ))}
                   </RadioGroup>
                 )}
 
-                {/* CODING */}
                 {q.type === "CODING" && (
                   <Box mt={2}>
-                    <Typography>
+                    <Typography className="sample">
                       Sample Input: {q.sampleInput}
                     </Typography>
 
@@ -231,11 +208,11 @@ function TestPage() {
 
           ))}
 
-          <Box textAlign="center">
+          <Box textAlign="center" mt={3}>
             <Button
               variant="contained"
-              color="primary"
               size="large"
+              className="submit-btn"
               onClick={submitTest}
             >
               Submit Test
@@ -245,7 +222,6 @@ function TestPage() {
       )}
 
     </Container>
-
   );
 }
 

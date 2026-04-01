@@ -51,27 +51,39 @@ function StudentDashboard(){
 
  };
 
- return(
+return (
+  <div className="container">
 
-  <div>
+    <h2>Student Dashboard</h2>
 
-   <h2>Student Dashboard</h2>
+    <div className="card">
+      <h3>Available Tests</h3>
 
-   <h3>Available Tests</h3>
+      <div className="grid">
+        {tests.map((t) => (
+          <div key={t.id} className="test-card">
 
-   {tests.map((t)=>(
-     <div key={t.id}>
-       {t.title} - {t.duration} minutes
-       <button onClick={()=>startTest(t.id)}>
-        Start Test
-       </button>
-     </div>
-   ))}
+            <h4>{t.title}</h4>
+
+            <p className="duration">
+              ⏱ {t.duration} minutes
+            </p>
+
+            <button
+              className="btn-start"
+              onClick={() => startTest(t.id)}
+            >
+              Start Test
+            </button>
+
+          </div>
+        ))}
+      </div>
+
+    </div>
 
   </div>
-
- )
-
+);
 }
 
 export default StudentDashboard;

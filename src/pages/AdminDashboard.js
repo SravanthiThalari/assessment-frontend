@@ -93,99 +93,122 @@ function AdminDashboard(){
  // ================= LEADERBOARD =================
  const sortedSubmissions = [...submissions].sort((a,b)=>b.score - a.score);
 
- return(
+ return (
+  <div className="container">
 
-  <div>
+    <h2>Admin Dashboard</h2>
 
-   <h2>Admin Dashboard</h2>
+    {/* CREATE / UPDATE TEST */}
+    <div className="card">
+      <h3>{editId ? "Update Test" : "Create Test"}</h3>
 
-   {/* CREATE / UPDATE TEST */}
+      <form onSubmit={saveTest} className="form-row">
 
-   <h3>{editId ? "Update Test" : "Create Test"}</h3>
+        <input
+          type="text"
+          name="title"
+          placeholder="Enter Test Title"
+          value={test.title}
+          onChange={handleChange}
+          className="input"
+        />
 
-   <form onSubmit={saveTest}>
+        <input
+          type="number"
+          name="duration"
+          placeholder="Duration (minutes)"
+          value={test.duration}
+          onChange={handleChange}
+          className="input"
+        />
 
-    <input
-     type="text"
-     name="title"
-     placeholder="Enter Test Title"
-     value={test.title}
-     onChange={handleChange}
-    />
+        <button className="btn-primary" type="submit">
+          {editId ? "Update" : "Create"}
+        </button>
 
-    <br/><br/>
+      </form>
+    </div>
 
-    <input
-     type="number"
-     name="duration"
-     placeholder="Duration (minutes)"
-     value={test.duration}
-     onChange={handleChange}
-    />
+    {/* EXISTING TESTS */}
+    <div className="card">
+      <h3>Existing Tests</h3>
 
-    <br/><br/>
+      <div className="grid">
+        {tests.map((t) => (
+          <div key={t.id} className="card-small">
 
-    <button type="submit">
-      {editId ? "Update Test" : "Create Test"}
-    </button>
+            <h4>{t.title}</h4>
+            <p>{t.duration} minutes</p>
 
-   </form>
+            <div className="action-buttons">
+              <button className="btn-primary" onClick={() => addQuestions(t.id)}>
+                Add
+              </button>
 
-   <hr/>
+              <button className="btn-edit" onClick={() => handleEdit(t)}>
+                Edit
+              </button>
 
-   {/* EXISTING TESTS */}
+              <button className="btn-delete" onClick={() => handleDelete(t.id)}>
+                Delete
+              </button>
+            </div>
 
-   <h3>Existing Tests</h3>
+          </div>
+        ))}
+      </div>
+    </div>
 
-   {tests.map((t)=>(
-     <div key={t.id} style={{ marginBottom: "10px" }}>
+    {/* STUDENT RESULTS TABLE */}
+    <div className="card">
+      <h3>All Student Results</h3>
 
-       {t.title} - {t.duration} minutes
+      <table className="table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Student ID</th>
+            <th>Test ID</th>
+            <th>Score</th>
+          </tr>
+        </thead>
 
-       <button onClick={()=>addQuestions(t.id)}>
-        Add Questions
-       </button>
+        <tbody>
+          {submissions.map((s, index) => (
+            <tr key={s.id}>
+              <td>{index + 1}</td>
+              <td>{s.studentId}</td>
+              <td>{s.testId}</td>
+              <td>{s.score}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
 
-       {/* ✏️ EDIT */}
-       <button onClick={()=>handleEdit(t)}>
-        Edit
-       </button>
+    {/* LEADERBOARD */}
+    <div className="card">
+      <h3>Leaderboard 🏆</h3>
 
-       {/* 🗑 DELETE */}
-       <button onClick={()=>handleDelete(t.id)}>
-        Delete
-       </button>
+      {sortedSubmissions.slice(0, 5).map((s, index) => {
 
-     </div>
-   ))}
+        let rankClass = "rank-default";
+        if (index === 0) rankClass = "rank-1";
+        else if (index === 1) rankClass = "rank-2";
+        else if (index === 2) rankClass = "rank-3";
 
-   <hr/>
-
-   {/* ALL RESULTS */}
-
-   <h3>All Student Results</h3>
-
-   {submissions.map((s)=>(
-     <div key={s.id}>
-       Student: {s.studentId} | Test: {s.testId} | Score: {s.score}
-     </div>
-   ))}
-
-   <hr/>
-
-   {/* LEADERBOARD */}
-
-   <h3>Leaderboard 🏆</h3>
-
-   {sortedSubmissions.slice(0,5).map((s,index)=>(
-     <div key={s.id}>
-       Rank {index+1} → Student {s.studentId} | Score: {s.score}
-     </div>
-   ))}
+        return (
+          <div key={s.id} className={`leaderboard-item ${rankClass}`}>
+            <strong>Rank {index + 1}</strong> |
+            Student {s.studentId} |
+            Score: {s.score}
+          </div>
+        );
+      })}
+    </div>
 
   </div>
-
- )
+);
 
 }
 

@@ -59,16 +59,44 @@ function Login() {
         alert("Login failed");
       });
   };
+return (
 
-  return (
+  <Box
+    sx={{
+      minHeight: "100vh",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "linear-gradient(to right, #eef2ff, #f5f7fb)"
+    }}
+  >
 
-    <Container maxWidth="sm" style={{ marginTop: "80px" }}>
+    <Container maxWidth="sm">
 
-      <Card elevation={6} style={{ borderRadius: "15px" }}>
+      <Card
+        elevation={10}
+        sx={{
+          borderRadius: "20px",
+          p: 3
+        }}
+      >
+
         <CardContent>
 
-          <Typography variant="h4" align="center" gutterBottom>
-            Login
+          <Typography
+            variant="h4"
+            align="center"
+            gutterBottom
+            sx={{ fontWeight: "bold", mb: 3 }}
+          >
+            Welcome Back 👋
+          </Typography>
+
+          <Typography
+            align="center"
+            sx={{ color: "gray", mb: 2 }}
+          >
+            Login to continue
           </Typography>
 
           <Box
@@ -76,7 +104,7 @@ function Login() {
             onSubmit={handleSubmit}
             display="flex"
             flexDirection="column"
-            gap={3}
+            gap={2.5}
           >
 
             <TextField
@@ -103,10 +131,15 @@ function Login() {
               type="submit"
               variant="contained"
               size="large"
-              style={{
-                background: "linear-gradient(45deg, #ff6a00, #ee0979)",
-                color: "white",
-                fontWeight: "bold"
+              sx={{
+                mt: 1,
+                borderRadius: "10px",
+                fontWeight: "bold",
+                textTransform: "none",
+                background: "linear-gradient(45deg, #4f46e5, #6366f1)",
+                ":hover": {
+                  background: "linear-gradient(45deg, #4338ca, #4f46e5)"
+                }
               }}
             >
               Login
@@ -115,10 +148,14 @@ function Login() {
           </Box>
 
         </CardContent>
+
       </Card>
 
     </Container>
-  );
+
+  </Box>
+
+);
 }
 
 export default Login;
