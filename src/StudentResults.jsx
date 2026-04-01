@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import API from "../api"; // ✅ use API
+import API from "./api"; // ✅ use API
 
 import {
   Container,

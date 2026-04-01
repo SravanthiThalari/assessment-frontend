@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import API from "../api"; // ✅ use API
+import API from "./api"; // ✅ use API
 import { useParams } from "react-router-dom";
 
 function AddQuestion(){

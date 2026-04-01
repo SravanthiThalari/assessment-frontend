@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import API from "../api"; // ✅ use API
+import API from "./api"; // ✅ use API
 import { useParams, useNavigate } from "react-router-dom";
 
 import {
